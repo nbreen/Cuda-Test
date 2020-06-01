@@ -29,15 +29,24 @@ int main(void){
   int blockSize = 256;
   int numBlocks = (N + blockSize -1) / blockSize;
 
+  cudaSetDevice(0);
+
   cudaMallocManaged(&x, N*sizeof(float));
   cudaMallocManaged(&y, N*sizeof(float));
 
-  // initialize x and y arrays on the host
-
-  cudaSetDevice(0);
+  // initialize x and y arrays on the GPU
+  // Run Kernel on GPU 0
   init<<<numBlocks,blockSize>>>(N ,x, y);
-  // Run kernel on 1M elements on the CPU
+  add<<<numBlocks,blockSize>>>(N, x, y);
+
   cudaSetDevice(1);
+
+  cudaMallocManaged(&x, N*sizeof(float));
+  cudaMallocManaged(&y, N*sizeof(float));
+
+  // initialize x and y arrays on the GPU
+  // Run Kernel on GPU 1
+  init<<<numBlocks,blockSize>>>(N ,x, y);
   add<<<numBlocks,blockSize>>>(N, x, y);
 
   // Wait for GPU to finish
