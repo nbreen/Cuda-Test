@@ -8,6 +8,7 @@ __global__ void add(int* devVal, int addEnd){
 int main(void){
     int* p0;
     int* p1;
+    int* h1;
     int currentDev;
     size_t size = sizeof(int);
 
@@ -33,4 +34,6 @@ int main(void){
     add<<<1,1>>>(p1, 3);
 
     cudaDeviceSynchronize();
+
+    printf("The final value is %d\n", *p1);
 }
